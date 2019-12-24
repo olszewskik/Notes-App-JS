@@ -52,8 +52,46 @@ const generateNoteDOM = note => {
   return noteElement;
 };
 
+// Sort your notes by one of three ways
+const sortNotes = (notes, sortBy) => {
+  if (sortBy === "byEdited") {
+    return notes.sort((a, b) => {
+      if (a.updateAt > b.updateAt) {
+        return -1;
+      } else if (a.updateAt < b.updateAt) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  } else if (sortBy === "byCreated") {
+    return notes.sort((a, b) => {
+      if (a.createdAt > b.createdAt) {
+        return -1;
+      } else if (a.createdAt < b.createdAt) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  } else if ((sortBy = "alphabetical")) {
+    return notes.sort((a, b) => {
+      if (a.title.toLowerCase() < b.title.toLowerCase()) {
+        return -1;
+      } else if (a.title.toLowerCase() > b.title.toLowerCase()) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  } else {
+    return notes;
+  }
+};
+
 // Render application notes
 const renderNotes = (notes, filters) => {
+  notes = sortNotes(notes, filters.sortBy);
   const filteredNotes = notes.filter(note => {
     return note.title.toLowerCase().includes(filters.searchText.toLowerCase());
   });
@@ -64,4 +102,9 @@ const renderNotes = (notes, filters) => {
     const noteElement = generateNoteDOM(note);
     document.querySelector("#notes").appendChild(noteElement);
   });
+};
+
+// Generate the last edited message
+const generateLastEdited = timestamp => {
+  return `Last edited ${moment(timestamp).fromNow()}`;
 };
